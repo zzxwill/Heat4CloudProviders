@@ -13,6 +13,9 @@ from hashlib import sha256
 import qingcloud.iaas 
 
 if __name__ == '__main__':
+    """
+        test by lbc
+        """
     conn = qingcloud.iaas.connect_to_zone(        
                                           'pek2', 
                                           'OVNQCDZGCMAMQCYQZTPQ',        
