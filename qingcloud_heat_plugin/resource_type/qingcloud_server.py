@@ -1,0 +1,110 @@
+from heat.engine import properties
+from heat.engine import resource
+
+
+import qingcloud.iaas 
+
+
+#class QingCloudServer(resource.Resource):
+class QingCloudServer(resource.Resource):   
+    PROPERTIES = (
+        IMAGE_ID,
+        LOGIN_MODE,
+        LOGIN_PASSWD,
+        ZONE
+    ) = (
+        'image_id',
+        'login_mode',
+        'login_passwd',
+        'zone'
+    )
+
+
+    properties_schema = {
+        IMAGE_ID: properties.Schema(
+            properties.Schema.STRING,
+            #_('XXX'),
+            required=True,
+        ),
+        LOGIN_MODE: properties.Schema(
+            properties.Schema.STRING,
+            #_('XXX'),
+            required=True,
+        ),
+        LOGIN_PASSWD: properties.Schema(
+            properties.Schema.STRING,
+            #_('xxx'),
+            required=True,
+        ),
+        ZONE: properties.Schema(
+            properties.Schema.STRING,
+            #_('xxx'),
+            required=True,
+        ),
+    }
+
+    update_allowed_keys = ('Properties',)
+
+    def __init__(self, name, json_snippet, stack):
+        print "OpenStackHeat-__init__() is called."
+        super(QingCloudServer, self).__init__(name, json_snippet, stack)   
+
+    attributes_schema = {
+        'xxx': _('xxx'),
+    }
+     
+    access_key_id = "OVNQCDZGCMAMQCYQZTPQ"   
+    secret_access_key = "fZmFLDKjswA5ZobyPfmFPgvXXNubgPcJ2QRevVs8"
+
+    def handle_create(self):
+        print "----------------------Heat engine is starting to deploy Server------------------------------"
+        
+
+        qingcloud_image_id = self.PROPERTIES.get(self.IMAGE_ID)
+        qingcloud_login_mode = self.PROPERTIES.get(self.LOGIN_MODE)
+        qingcloud_login_passwd = self.PROPERTIES.get(self.LOGIN_PASSWD)
+        zone = self.PROPERTIES.get(self.ZONE) 
+        
+        
+        conn = qingcloud.iaas.connect_to_zone(        
+                                          zone, 
+                                          self.access_key_id,        
+                                          self.secret_access_key)
+        ret = conn.run_instances(        
+                             image_id=qingcloud_image_id,        
+                             cpu=1,        
+                             memory=1024,        
+                             #vxnets=['vxnet-0'],        
+                             login_mode= qingcloud_login_mode,        
+                             login_passwd= qingcloud_login_passwd    )
+        print ret
+        
+        return
+    
+    
+    
+         
+        
+        #=======================================================================
+        # url = "https://api.qingcloud.com/iaas/?action=RunInstances&access_key_id=" + self.access_key_id + "&image_id=" + str(image_id) + "&login_mode=" + str(login_mode) + "&login_passwd=" + str(login_passwd) + "&zone=" + str(zone)
+        # 
+        # h = hmac.new(self.secret_access_key, digestmod=sha256)
+        # h.update(url)
+        # sign = base64.b64encode(h.digest()).strip()
+        # signature = urllib.quote_plus(sign)
+        # url += url + "&signature=" + signature
+        #=======================================================================
+
+        return 
+
+    def check_create_complete(self):
+        return True
+
+
+def resource_mapping():
+    return {
+        'COM::TwoFellows::QINGCLOUD_Server': QingCloudServer,
+    }
+
+if __name__ == '__main__':
+    pass
