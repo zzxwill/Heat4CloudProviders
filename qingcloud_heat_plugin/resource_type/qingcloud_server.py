@@ -78,22 +78,7 @@ class QingCloudServer(resource.Resource):
                              login_mode= qingcloud_login_mode,        
                              login_passwd= qingcloud_login_passwd    )
         print ret
-        
-        return
-    
-    
-    
-         
-        
-        #=======================================================================
-        # url = "https://api.qingcloud.com/iaas/?action=RunInstances&access_key_id=" + self.access_key_id + "&image_id=" + str(image_id) + "&login_mode=" + str(login_mode) + "&login_passwd=" + str(login_passwd) + "&zone=" + str(zone)
-        # 
-        # h = hmac.new(self.secret_access_key, digestmod=sha256)
-        # h.update(url)
-        # sign = base64.b64encode(h.digest()).strip()
-        # signature = urllib.quote_plus(sign)
-        # url += url + "&signature=" + signature
-        #=======================================================================
+
 
         return 
 
