@@ -23,18 +23,22 @@ class QingCloudServer(resource.Resource):
     properties_schema = {
         IMAGE_ID: properties.Schema(
             properties.Schema.STRING,
+            #_('XXX'),
             required=True,
         ),
         LOGIN_MODE: properties.Schema(
             properties.Schema.STRING,
+            #_('XXX'),
             required=True,
         ),
         LOGIN_PASSWD: properties.Schema(
             properties.Schema.STRING,
+            #_('xxx'),
             required=True,
         ),
         ZONE: properties.Schema(
             properties.Schema.STRING,
+            #_('xxx'),
             required=True,
         ),
     }
@@ -46,6 +50,7 @@ class QingCloudServer(resource.Resource):
         super(QingCloudServer, self).__init__(name, json_snippet, stack)   
 
     attributes_schema = {
+        # 'xxx': _('xxx'),
         'xxx': 'XXX',
         'YYY': 'YYY'
     }
@@ -57,6 +62,12 @@ class QingCloudServer(resource.Resource):
         print "----------------------Heat engine is starting to deploy Server------------------------------"
         
 
+        '''
+        qingcloud_image_id = self.PROPERTIES.get(self.IMAGE_ID)
+        qingcloud_login_mode = self.PROPERTIES.get(self.LOGIN_MODE)
+        qingcloud_login_passwd = self.PROPERTIES.get(self.LOGIN_PASSWD)
+        zone = self.PROPERTIES.get(self.ZONE)
+        '''
         qingcloud_image_id = self.properties['image_id']
         qingcloud_login_mode = self.properties['login_mode']
         qingcloud_login_passwd = self.properties['login_passwd']
@@ -79,6 +90,7 @@ class QingCloudServer(resource.Resource):
 
         return 
 
+    # def check_create_complete(self):
     def check_create_complete(self, token):
         return True
 
