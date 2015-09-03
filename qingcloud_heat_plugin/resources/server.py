@@ -1,11 +1,9 @@
 from heat.engine import properties
 from heat.engine import resource
-
+from qingcloud_heat_plugin.client.api_connection import API_Connection
 
 import qingcloud.iaas 
 
-
-#class QingCloudServer(resource.Resource):
 class QingCloudServer(resource.Resource):   
     PROPERTIES = (
         IMAGE_ID,
@@ -54,9 +52,6 @@ class QingCloudServer(resource.Resource):
         'xxx': 'XXX',
         'YYY': 'YYY'
     }
-     
-    access_key_id = "OVNQCDZGCMAMQCYQZTPQ"   
-    secret_access_key = "fZmFLDKjswA5ZobyPfmFPgvXXNubgPcJ2QRevVs8"
 
     def handle_create(self):
         print "----------------------Heat engine is starting to deploy Server------------------------------"
@@ -72,12 +67,15 @@ class QingCloudServer(resource.Resource):
         qingcloud_login_mode = self.properties['login_mode']
         qingcloud_login_passwd = self.properties['login_passwd']
         zone = self.properties['zone']
-        
-        
-        conn = qingcloud.iaas.connect_to_zone(        
-                                          zone, 
-                                          self.access_key_id,        
-                                          self.secret_access_key)
+
+        '''
+        Connect to QingCloud API
+        zzxwill
+        9/1/2015
+        '''
+        api_connection = API_Connection()
+        conn = api_connection.get_connection(zone)
+
         ret = conn.run_instances(        
                              image_id=qingcloud_image_id,        
                              cpu=1,        

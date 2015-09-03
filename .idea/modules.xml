@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../Heat-Kilo/.idea/Heat-Kilo.iml" filepath="$PROJECT_DIR$/../Heat-Kilo/.idea/Heat-Kilo.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Heat4CloudProvider.iml" filepath="$PROJECT_DIR$/.idea/Heat4CloudProvider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../CMS1.6/CMS Heat Plugin/cms_heat_plugin/.idea/cms_heat_plugin.iml" filepath="$PROJECT_DIR$/../../CMS1.6/CMS Heat Plugin/cms_heat_plugin/.idea/cms_heat_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../qingcloud-sdk-python/.idea/qingcloud-sdk-python.iml" filepath="$PROJECT_DIR$/../qingcloud-sdk-python/.idea/qingcloud-sdk-python.iml" />
     </modules>
   </component>
 </project>
