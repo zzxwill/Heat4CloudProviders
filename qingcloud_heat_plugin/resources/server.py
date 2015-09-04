@@ -4,7 +4,12 @@ from qingcloud_heat_plugin.client.api_connection import API_Connection
 
 import qingcloud.iaas 
 
-class QingCloudServer(resource.Resource):   
+class QingCloudServer(resource.Resource):
+
+    _return_instance_dict = {}
+
+    _conn = None
+
     PROPERTIES = (
         IMAGE_ID,
         LOGIN_MODE,
@@ -71,25 +76,57 @@ class QingCloudServer(resource.Resource):
         '''
         Connect to QingCloud API
         zzxwill
-        9/1/2015
+        9/3/2015
         '''
         api_connection = API_Connection()
         conn = api_connection.get_connection(zone)
 
-        ret = conn.run_instances(        
+        self._conn = conn
+
+
+        ret = conn.run_instances(
                              image_id=qingcloud_image_id,        
                              cpu=1,        
                              memory=1024,        
                              #vxnets=['vxnet-0'],        
                              login_mode= qingcloud_login_mode,        
                              login_passwd= qingcloud_login_passwd    )
-        print ret
+        if 'ret_code' in ret.keys():
+            return_code = ret['ret_code']
+            if return_code == 0:
+                return True
+            else:   # else can be elaborated later per https://docs.qingcloud.com/api/common/error_code.html
+                return False
+
+        self._return_instance_dict = ret
+
+        return ret
 
 
-        return 
+
 
     # def check_create_complete(self):
     def check_create_complete(self, token):
+        ret = self._return_instance_dict
+
+        if 'ret_code' in ret.keys():
+            return_code = ret['ret_code']
+            if return_code == 0:
+                '''
+                Check the status of the instance
+                zzxwill
+                9/4/2015
+                '''
+                #ret = conn.describe_instances(['i-668tmejn'])
+                instance_status_ret = self._conn.describe_instances(ret['instances'])
+                instance_status = instance_status_ret['instance_set'][0]['status']
+                if instance_status == "pending":
+                    return False
+                elif instance_status == "running":
+                    return True
+
+                print(instance_status_ret)
+
         return True
 
 

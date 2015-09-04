@@ -9,25 +9,80 @@ import base64
 import hmac
 import urllib
 from hashlib import sha256
+import time
 
-import qingcloud.iaas 
+import qingcloud.iaas
 
 if __name__ == '__main__':
     """
         test by lbc
         """
-    conn = qingcloud.iaas.connect_to_zone(        
-                                          'pek2', 
-                                          'OVNQCDZGCMAMQCYQZTPQ',        
+    conn = qingcloud.iaas.connect_to_zone(
+                                          'pek2',
+                                          'OVNQCDZGCMAMQCYQZTPQ',
                                           'fZmFLDKjswA5ZobyPfmFPgvXXNubgPcJ2QRevVs8'    )
-    ret = conn.run_instances(        
-                             image_id='trustysrvx64e',        
-                             cpu=1,        
-                             memory=1024,        
-                             #vxnets=['vxnet-0'],        
-                             login_mode='passwd',        
-                             login_passwd='Heat4Chuck'    )
+    ret = conn.run_instances(
+                             image_id='trustysrvx64e',
+                             cpu=1,
+                             memory=1024,
+                             #vxnets=['vxnet-0'],
+                             login_mode='passwd',
+                             login_passwd='Heat4Chuck'
+    )
     print ret
+
+    time.sleep(10)
+
+    if 'ret_code' in ret.keys():
+            return_code = ret['ret_code']
+            if return_code == 0:
+                '''
+                Check the status of the instance
+                zzxwill
+                9/4/2015
+                '''
+                #ret = conn.describe_instances(['i-668tmejn'])
+                ret = conn.describe_instances(ret['instances'])
+                instance_status = ret['instance_set'][0]['status']
+                if instance_status == "pending":
+                    print("False")
+                elif instance_status == "running":
+                    print("True")
+
+                print(ret)
+
+
+
+
+    # ret = conn.describe_instances(ret['instances'])
+    # #ret = conn.describe_instances(['i-oqgqzoz1'])
+    # print ret
+    # instance_status = ret['instance_set'][0]['status']
+    # if instance_status == "pending":
+    #     print("False")
+    # elif instance_status == "running":
+    #     print("True")
+
+
+
+
+
+    #print ret
+
+    # if 'ret_code' in ret.keys():
+    #         retrun_code = ret['ret_code']
+    #         if retrun_code == 0:
+    #             '''
+    #             Check the status of the instance
+    #             zzxwill
+    #             9/4/2015
+    #             '''
+    #             ret = conn.describe_instances(ret['instances'] )
+    #             print(ret)
+    #
+
+
+
 
     
 
