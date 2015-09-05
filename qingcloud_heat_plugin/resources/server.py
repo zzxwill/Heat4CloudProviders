@@ -1,10 +1,16 @@
 from heat.engine import properties
 from heat.engine import resource
 from qingcloud_heat_plugin.client.api_connection import API_Connection
+from qingcloud_heat_plugin.log.plugin_log import PluginLog
 
 import qingcloud.iaas 
 
+
 class QingCloudServer(resource.Resource):
+
+    plugin_log = PluginLog()
+    LOG = plugin_log.get_logger()
+
 
     _return_instance_dict = {}
 
@@ -49,7 +55,7 @@ class QingCloudServer(resource.Resource):
     update_allowed_keys = ('Properties',)
 
     def __init__(self, name, json_snippet, stack):
-        print "OpenStackHeat-__init__() is called."
+        self.LOG.debug("OpenStackHeat-__init__() is called.")
         super(QingCloudServer, self).__init__(name, json_snippet, stack)   
 
     attributes_schema = {
@@ -59,7 +65,8 @@ class QingCloudServer(resource.Resource):
     }
 
     def handle_create(self):
-        print "----------------------Heat engine is starting to deploy Server------------------------------"
+        self.LOG.debug("----------------------Heat engine is starting to deploy Server------------------------------")
+        self.LOG.info("aaa")
         
 
         '''
@@ -125,7 +132,7 @@ class QingCloudServer(resource.Resource):
                 elif instance_status == "running":
                     return True
 
-                print(instance_status_ret)
+                self.LOG.debug("instance_status_ret:" + instance_status_ret)
 
         return True
 
