@@ -20,7 +20,7 @@
   <component name="ProjectModuleManager">
     <modules />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.6 (C:\python27_x64\python.exe)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" />
   <component name="PropertiesComponent">
     <property name="options.lastSelected" value="PyConsoleConfigurable.Python Console" />
     <property name="options.splitter.main.proportions" value="0.3" />
