@@ -23,7 +23,7 @@ parameters:
   
 resources:
   server:
-    type: COM::TwoFellows::QINGCLOUD_Server
+    type: COM::TwoFellows::Server
     properties:
       image_id: { get_param: image_id }
       login_mode: { get_param: login_mode  }

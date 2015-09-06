@@ -10,10 +10,7 @@ class QingCloudServer(resource.Resource):
 
     plugin_log = PluginLog()
     LOG = plugin_log.get_logger()
-
-
     _return_instance_dict = {}
-
     _conn = None
 
     PROPERTIES = (
@@ -139,7 +136,7 @@ class QingCloudServer(resource.Resource):
 
 def resource_mapping():
     return {
-        'COM::TwoFellows::QINGCLOUD_Server': QingCloudServer,
+        'COM::TwoFellows::Server': QingCloudServer,
     }
 
 if __name__ == '__main__':
