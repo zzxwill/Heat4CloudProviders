@@ -1,7 +1,7 @@
 heat_template_version: 2015-04-30
 
 description: >
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  To create an instance in QingCloud
 
 parameters:
   image_id:
@@ -31,6 +31,6 @@ resources:
       zone: { get_param: zone }
 
 outputs:
-  server:
-    description: xxx
-    value: { get_attr: [ server, xxx ] }
+  instance_id:
+    description: ID of an instance
+    value: { get_attr: [ server, instance_id ] }
