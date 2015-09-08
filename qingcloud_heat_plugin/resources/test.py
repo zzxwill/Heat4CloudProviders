@@ -19,8 +19,8 @@ if __name__ == '__main__':
         """
     conn = qingcloud.iaas.connect_to_zone(
                                           'pek2',
-                                          'OVNQCDZGCMAMQCYQZTPQ',
-                                          'fZmFLDKjswA5ZobyPfmFPgvXXNubgPcJ2QRevVs8'    )
+                                          'MGJYTHJRQYNGAOHKCQPK',
+                                          'WalqP1YzFK2tFMI2qm9EA1YDezLGFis9NQSd7ir5'    )
     ret = conn.run_instances(
                              image_id='trustysrvx64e',
                              cpu=1,
