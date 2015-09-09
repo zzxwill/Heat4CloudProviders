@@ -3,6 +3,7 @@ from heat.engine import resource
 from qingcloud_heat_plugin.client.api_connection import API_Connection
 from qingcloud_heat_plugin.log.plugin_log import PluginLog
 from heat.common.i18n import _
+from heat.common import exception
 
 import qingcloud.iaas 
 
@@ -98,16 +99,18 @@ class QingCloudServer(resource.Resource):
                              login_mode= qingcloud_login_mode,        
                              login_passwd= qingcloud_login_passwd)
 
+        self._return_instance_dict = ret
         self.LOG.debug("ret: run_instance: %s" % ret)
 
         if 'ret_code' in ret.keys():
             return_code = ret['ret_code']
+            self.LOG.info("return code or instance provisioning is: %s" % ret)
             if return_code == 0:
                 return True
             else:   # else can be elaborated later per https://docs.qingcloud.com/api/common/error_code.html
                 return False
 
-        self._return_instance_dict = ret
+
 
         return ret
 
@@ -116,6 +119,7 @@ class QingCloudServer(resource.Resource):
         self.LOG.debug("server-check_create_complete is executed.")
 
         ret = self._return_instance_dict
+        self.LOG.debug("instance information is [%s]" % ret)
 
         if 'ret_code' in ret.keys():
             return_code = ret['ret_code']
@@ -139,8 +143,11 @@ class QingCloudServer(resource.Resource):
                     return True
 
                 self.LOG.debug("instance_status_ret: %s" % instance_status_ret)
+            else:
+                self.LOG.debug("return_code: %s" %return_code)
+                exc = exception.Error(_("Server failed to provision with reason: %s" % return_code))
+                raise exc
 
-        return True
 
     def _resolve_attribute(self, name):
         if name == "instance_id":
