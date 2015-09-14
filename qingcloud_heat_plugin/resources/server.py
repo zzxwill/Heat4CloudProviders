@@ -4,14 +4,16 @@ from qingcloud_heat_plugin.client.api_connection import API_Connection
 from qingcloud_heat_plugin.log.plugin_log import PluginLog
 from heat.common.i18n import _
 from heat.common import exception
+from heat.engine import constraints
 
 import qingcloud.iaas 
 
+LOG = PluginLog().get_logger()
 
 class QingCloudServer(resource.Resource):
 
-    plugin_log = PluginLog()
-    LOG = plugin_log.get_logger()
+    #plugin_log = PluginLog()
+    #LOG = plugin_log.get_logger()
     _return_instance_dict = {}
     _conn = None
 
@@ -53,13 +55,16 @@ class QingCloudServer(resource.Resource):
             properties.Schema.STRING,
             _('data center'),
             required=True,
+            constraints=[
+                         constraints.Length(1),
+            ]
         ),
     }
 
     update_allowed_keys = ('Properties',)
 
     def __init__(self, name, json_snippet, stack):
-        self.LOG.debug("Server-__init__() is called.")
+        LOG.debug("Server-__init__() is called.")
         super(QingCloudServer, self).__init__(name, json_snippet, stack)   
 
     attributes_schema = {
@@ -67,13 +72,13 @@ class QingCloudServer(resource.Resource):
     }
 
     def handle_create(self):
-        self.LOG.info("----------------------Heat engine is starting to deploy Server------------------------------")
+        LOG.info("----------------------Heat engine is starting to deploy Server------------------------------")
         
 
         '''
         qingcloud_image_id = self.PROPERTIES.get(self.IMAGE_ID)
-        qingcloud_login_mode = self.PROPERTIES.get(self.LOGIN_MODE)
-        qingcloud_login_passwd = self.PROPERTIES.get(self.LOGIN_PASSWD)
+        qingcloud_login_mode = self.PROPERTIES.get(LOGIN_MODE)
+        qingcloud_login_passwd = self.PROPERTIES.get(LOGIN_PASSWD)
         zone = self.PROPERTIES.get(self.ZONE)
         '''
         qingcloud_image_id = self.properties['image_id']
@@ -100,11 +105,11 @@ class QingCloudServer(resource.Resource):
                              login_passwd= qingcloud_login_passwd)
 
         self._return_instance_dict = ret
-        self.LOG.debug("ret: run_instance: %s" % ret)
+        LOG.debug("ret: run_instance: %s" % ret)
 
         if 'ret_code' in ret.keys():
             return_code = ret['ret_code']
-            self.LOG.info("return code or instance provisioning is: %s" % ret)
+            LOG.info("return code or instance provisioning is: %s" % ret)
             if return_code == 0:
                 return True
             else:   # else can be elaborated later per https://docs.qingcloud.com/api/common/error_code.html
@@ -116,14 +121,14 @@ class QingCloudServer(resource.Resource):
 
     # def check_create_complete(self):
     def check_create_complete(self, token):
-        self.LOG.debug("server-check_create_complete is executed.")
+        LOG.debug("server-check_create_complete is executed.")
 
         ret = self._return_instance_dict
-        self.LOG.debug("instance information is [%s]" % ret)
+        LOG.debug("instance information is [%s]" % ret)
 
         if 'ret_code' in ret.keys():
             return_code = ret['ret_code']
-            self.LOG.debug("The status of the VM provisioning is [%s]" % return_code)
+            LOG.debug("The status of the VM provisioning is [%s]" % return_code)
             if return_code == 0:
                 '''
                 Check the status of the instance
@@ -133,25 +138,32 @@ class QingCloudServer(resource.Resource):
                 #ret = conn.describe_instances(['i-668tmejn'])
                 instance_status_ret = self._conn.describe_instances(ret['instances'])
 
-                self.LOG.debug("instance_status_ret: %s" % instance_status_ret)
+                LOG.debug("instance_status_ret: %s" % instance_status_ret)
                 instance_status = instance_status_ret['instance_set'][0]['status']
-                self.LOG.debug("The status of the newly provisioned VM is [%s]" % instance_status)
+                LOG.debug("The status of the newly provisioned VM is [%s]" % instance_status)
 
                 if instance_status == "pending":
                     return False
                 elif instance_status == "running":
                     return True
 
-                self.LOG.debug("instance_status_ret: %s" % instance_status_ret)
+                LOG.debug("instance_status_ret: %s" % instance_status_ret)
             else:
-                self.LOG.debug("return_code: %s" %return_code)
+                LOG.debug("return_code: %s" %return_code)
                 exc = exception.Error(_("Server failed to provision with reason: %s" % return_code))
                 raise exc
 
 
     def _resolve_attribute(self, name):
-        if name == "instance_id":
-            return self._return_instance_dict['instances']
+        LOG.debug("-------------------------------_resolve_attribute----------------------------")
+        LOG.debug("-------------------------------------------------------------------------------name: %s" % name)
+
+        LOG.debug("-------------equal? %s" % name == 'instance_id')
+
+        if name == 'instance_id':
+            LOG.debug("-------------------------------------------------------------------------------resolving attribute %s" % name)
+            LOG.debug("_return_instance_dict['instances']: %s" % self._return_instance_dict['instances'])
+            return self._return_instance_dict['instances'][0]
 
 
 def resource_mapping():
