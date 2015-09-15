@@ -15,6 +15,8 @@ class QingCloudServer(resource.Resource):
     #plugin_log = PluginLog()
     #LOG = plugin_log.get_logger()
     _return_instance_dict = {}
+    _return_instance_dict_test = {}
+    _return_instance_dict_delete = {}
     _conn = None
 
     PROPERTIES = (
@@ -104,7 +106,15 @@ class QingCloudServer(resource.Resource):
                              login_mode= qingcloud_login_mode,        
                              login_passwd= qingcloud_login_passwd)
 
+        '''
+        A sample of returned strings
+        {u'action': u'RunInstancesResponse', u'instances': [u'i-kbvq1jio'], u'job_id': u'j-91chniph', u'ret_code': 0}
+        '''
+
         self._return_instance_dict = ret
+        global _return_instance_dict_test
+        _return_instance_dict_test = ret
+
         LOG.debug("ret: run_instance: %s" % ret)
 
         if 'ret_code' in ret.keys():
@@ -149,10 +159,37 @@ class QingCloudServer(resource.Resource):
 
                 LOG.debug("instance_status_ret: %s" % instance_status_ret)
             else:
-                LOG.debug("return_code: %s" %return_code)
+                LOG.debug("return_code: %s" % return_code)
                 exc = exception.Error(_("Server failed to provision with reason: %s" % return_code))
                 raise exc
 
+    def handle_delete(self):
+        zone = self.properties['zone']
+        LOG.debug("zone: %s" % zone)
+
+        api_connection = API_Connection()
+        conn = api_connection.get_connection(zone)
+        LOG.debug("_return_instance_dict: %s" % self._return_instance_dict)
+        LOG.debug("_return_instance_dict_test: %s" % _return_instance_dict_test)
+        #ret = conn.terminate_instances(self._return_instance_dict['instances'])
+        ret = conn.terminate_instances(_return_instance_dict_test['instances'])
+
+        self._return_instance_dict_delete = ret
+        LOG.debug("return of terminate_instances: %s" % ret)
+        return
+
+
+    def check_delete_complete(self, cookie=None):
+        LOG.debug("return of terminate_instances: %s" % self._return_instance_dict_delete)
+        return_code = self._return_instance_dict_delete['ret_code']
+        if return_code == 0:
+            return True
+        else:
+            return_message = self._return_instance_dict_delete['message']
+            exc = exception.Error(_("Server failed to be deleted with reason: %s" % return_message))
+            raise exc
+
+        return False
 
     def _resolve_attribute(self, name):
         LOG.debug("-------------------------------_resolve_attribute----------------------------")
