@@ -46,7 +46,7 @@ class QingCloudSSHKey(resource.Resource):
     def check_create_complete(self, token):
         LOG.info("----------------------Heat engine is starting to check whether creation of SSH key pair completes------------------------------")
         LOG.debug("token of check_create_complete %s" % token)
-        return True
+        return False
 
 
 

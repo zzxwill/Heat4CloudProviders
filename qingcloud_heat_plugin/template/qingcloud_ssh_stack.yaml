@@ -13,7 +13,6 @@ parameters:
       description: 密钥对名称
       default: ''
 
-  
 resources:
   ssh:
     type: COM::TwoFellows::SSH
