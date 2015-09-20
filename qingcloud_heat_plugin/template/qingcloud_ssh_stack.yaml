@@ -1,0 +1,27 @@
+heat_template_version: 2015-04-30
+
+description: >
+  To create an SSH Key in QingCloud
+
+parameters:
+  key_pair_zone:
+      type: string
+      description: 区域 ID，注意要小写
+      default: pek2
+  key_pair_name:
+      type: string
+      description: 密钥对名称
+      default: ''
+
+  
+resources:
+  ssh:
+    type: COM::TwoFellows::SSH
+    properties:
+      zone: { get_param: key_pair_zone }
+      name: { get_param: key_pair_name }
+
+outputs:
+  key_pair_name:
+    description: name of the key pair
+    value: { get_attr: [ ssh, name ] }
