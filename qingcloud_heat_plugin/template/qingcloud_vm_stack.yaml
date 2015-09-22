@@ -4,7 +4,7 @@ description: >
   To create an instance in QingCloud
 
 parameters:
-  image_id:
+  server_image_id:
     type: string
     description: 映像ID，此映像将作为主机的模板。可传青云提供的映像ID，或自己创建的映像ID
     default: trustysrvx64e
@@ -25,7 +25,7 @@ resources:
   server:
     type: COM::TwoFellows::Server
     properties:
-      image_id: { get_param: image_id }
+      image_id: { get_param: server_image_id }
       login_mode: { get_param: login_mode  }
       login_passwd: { get_param: login_passwd }
       zone: { get_param: zone }
