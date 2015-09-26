@@ -14,13 +14,16 @@ parameters:
       default: ''
 
 resources:
-  ssh:
-    type: COM::TwoFellows::SSH
+  key:
+    type: COM::TwoFellows::Key
     properties:
       zone: { get_param: key_pair_zone }
       name: { get_param: key_pair_name }
 
 outputs:
-  key_pair_name:
-    description: name of the key pair
-    value: { get_attr: [ ssh, name ] }
+  pub_key:
+    description: public key
+    value: { get_attr: [ key, pub_key ] }
+  private_key:
+    description: private key
+    value: { get_attr: [ key, private_key ] }
