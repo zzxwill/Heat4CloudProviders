@@ -1,0 +1,32 @@
+heat_template_version: 2015-04-30
+
+description: >
+  To log on to an instance and execute some commands
+
+parameters:
+  instance_ip:
+      type: string
+      description: The public IP address of the instance
+      default: 119.254.100.229
+  private_key_file:
+      type: string
+      description: The file path of a private key
+      default: /usr/lib/heat/qingcloud_heat_plugin/client/private_key_pair
+  ssh_user:
+      type: string
+      description: SSH user
+      default: root
+
+
+resources:
+  key_logon:
+    type: COM::TwoFellows::KeyLogon
+    properties:
+      ip: { get_param: instance_ip }
+      private_key_file: { get_param: private_key_file }
+      user: { get_param: ssh_user }
+
+outputs:
+  instance_ip:
+    description: private key
+    value: { get_attr: [ key_logon, ip ] }
