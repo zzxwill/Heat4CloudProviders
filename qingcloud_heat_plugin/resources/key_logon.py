@@ -50,13 +50,10 @@ class QingCloudKeyLogon(resource.Resource):
         '''
         LOG.info("Heat engine is starting to log on to an instance and execute some commands")
 
-
-        zone = "pek2"
-
-
         ip = self.properties['ip']
         private_key_file = self.properties['private_key_file']
         user = self.properties['user']
+        zone = self.properties['zone']
 
         ssh_client = paramiko.SSHClient()
         private_key = paramiko.RSAKey.from_private_key_file(private_key_file)

@@ -198,7 +198,9 @@ class QingCloudServer(resource.Resource):
         LOG.debug("-------------equal? %s" % name == 'instance_id')
 
         if name == 'instance_id':
-            LOG.debug("-------------------------------------------------------------------------------resolving attribute %s" % name)
+            return "id-et3x"
+            LOG.debug("------------------------------------------------resolving attribute %s" % name)
+            LOG.debug("_return_instance_dict: %s" % self._return_instance_dict)
             LOG.debug("_return_instance_dict['instances']: %s" % self._return_instance_dict['instances'])
             return self._return_instance_dict['instances'][0]
 

@@ -48,14 +48,9 @@ class QingCloudKeyAttachment(resource.Resource):
         #import pdb
         #pdb.set_trace()
 
-
-        zone = "pek2"
-
-
-
-
         key_pair_id = self.properties['key_pair_id']
         instance_id = self.properties['instance_id']
+        zone = self.properties['zone']
         conn = API_Connection().get_connection(zone)
         self._conn = conn
 

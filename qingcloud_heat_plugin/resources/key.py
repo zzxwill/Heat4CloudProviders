@@ -42,6 +42,10 @@ class QingCloudKey(resource.Resource):
         #pdb.set_trace()
         zone = self.properties['zone']
         name = self.properties['name']
+        a = self.properties['a']
+        LOG.debug("------------------------a: [%s]" % a)
+
+
         conn = API_Connection().get_connection(zone)
         self._conn = conn
 
@@ -54,7 +58,7 @@ class QingCloudKey(resource.Resource):
         u'ret_code': 0})
         '''
         if 'ret_code' not in ret.keys() or 'keypair_id' not in ret.keys():
-            exc = exception.Error(_("Creation of key pair failed  failed without unknown reasons"))
+            exc = exception.Error(_("Creation of key pair failed  without unknown reasons"))
             raise exc
 
         ret_code = ret['ret_code']

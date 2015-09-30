@@ -6,19 +6,19 @@ description: >
 parameters:
   server_image_id:
     type: string
-    description: 映像ID，此映像将作为主机的模板。可传青云提供的映像ID，或自己创建的映像ID
+    description: image id
     default: trustysrvx64e
   login_mode:
       type: string
-      description: 指定登录方式。当为 linux 主机时，有效值为 keypair 和 passwd; 当为 windows 主机时，只能选用 passwd 登录方式。
+      description: login mode. For Linux, there are keypair and passwd; for windows, there is only passwd
       default: passwd
   login_passwd:
       type: string
-      description: 登录密码。
-      default: Heat4Chuck
+      description:
+      default: U8yx97xYw
   zone:
       type: string
-      description: 区域 ID，注意要小写
+      description: data center
       default: pek2            
   
 resources:
