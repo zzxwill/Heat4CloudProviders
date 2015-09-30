@@ -1,0 +1,26 @@
+heat_template_version: 2015-04-30
+
+description: >
+  To associate an IP address to an instance
+
+parameters:
+  public_ip:
+      type: string
+      description: The public IP address
+      default: eip-10t5adbh
+  instance_id:
+      type: string
+      description: The ID of an instance. This could be a list, but currently, just keep it as one key pair
+      default: i-qevfnj8e
+  zone:
+      type: string
+      description: data center
+      default: pek2
+
+resources:
+  ip:
+    type: COM::TwoFellows::IP
+    properties:
+      eip: { get_param: public_ip }
+      instance_id: { get_param: instance_id }
+      zone: { get_param: zone }
