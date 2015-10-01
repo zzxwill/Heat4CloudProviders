@@ -45,6 +45,12 @@ class QingCloudKeyLogon(resource.Resource):
     }
 
     def handle_create(self):
+        import time
+        time.sleep(90)
+        import logging
+        r = logging.getLogger()
+        r.debug("-----------------------------------------------")
+        r.error("-------------------------eeeeeeeeeeeeeee--------------------")
         '''
         To log on to an instance and execute some command
         '''
@@ -53,13 +59,17 @@ class QingCloudKeyLogon(resource.Resource):
         ip = self.properties['ip']
         private_key_file = self.properties['private_key_file']
         user = self.properties['user']
-        zone = self.properties['zone']
+        r.debug("ip: %s" % ip)
+        r.debug("private_key_file: %s" % private_key_file)
+        r.debug(" user: %s" %  user)
 
         ssh_client = paramiko.SSHClient()
         private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
+            r.debug("connect before")
             ssh_client.connect(hostname=ip, username=user, password=None, pkey=private_key)
+            r.debug("connect after")
             cmd = "touch /root/zhouzhengxi.txt"
             stdin, stdout, stderr = ssh_client.exec_command(cmd)
 
@@ -69,8 +79,11 @@ class QingCloudKeyLogon(resource.Resource):
 
         except Exception as e:
             LOG.error("Fail to log on the instance with reason: [%s]" % e)
-            exc = exception.Error(((e)))
+            exc = exception.Error((("Failed: %s" %e)))
+            r.debug("------------%s-----------" % e)
             raise exc
+
+
 
     def check_create_complete(self, token):
         """

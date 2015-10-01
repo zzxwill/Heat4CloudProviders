@@ -32,13 +32,17 @@ class QingCloudKeyAttachment(resource.Resource):
             _('instance id'),
             required=True,
         ),
+        'zone': properties.Schema(
+            properties.Schema.STRING,
+            _('data center'),
+            required=True,
+            constraints=[
+                constraints.Length(1),
+            ]
+        ),
     }
 
     update_allowed_keys = ('Properties',)
-
-    attributes_schema = {
-        'private_key': _('the private SSH key pair'),
-    }
 
     def handle_create(self):
         '''
@@ -81,6 +85,8 @@ class QingCloudKeyAttachment(resource.Resource):
             return False
 
     def check_create_complete(self, token):
+        import time
+        time.sleep(90)
         """
         Check the status of attaching a key pair to an instance
         @param token: The return of handle_create()
@@ -90,14 +96,6 @@ class QingCloudKeyAttachment(resource.Resource):
         LOG.info("Heat engine is starting to check whether the attachment of SSH key pair to an instance completes")
         LOG.debug("Token return by create operation is [%s]" % token)
         return token
-
-
-    def _resolve_attribute(self, name):
-        LOG.debug("Resolving attributes of the resource type")
-
-        if name == 'private_key':
-            return "aaa"
-
 
 def resource_mapping():
     return {

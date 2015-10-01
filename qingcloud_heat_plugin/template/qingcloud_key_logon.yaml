@@ -16,10 +16,6 @@ parameters:
       type: string
       description: SSH user
       default: root
-  zone:
-      type: string
-      description: data center
-      default: pek2
 
 
 resources:
@@ -29,8 +25,6 @@ resources:
       ip: { get_param: instance_ip }
       private_key_file: { get_param: private_key_file }
       user: { get_param: ssh_user }
-      zone: { get_param: zone }
-
 outputs:
   instance_ip:
     description: private key

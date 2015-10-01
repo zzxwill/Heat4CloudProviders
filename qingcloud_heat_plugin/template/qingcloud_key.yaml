@@ -12,19 +12,21 @@ parameters:
       type: string
       description: the name of hte key pair
       default: ''
+  private_key_file:
+      type: string
+      description: The file path of a private key
+      default: /usr/lib/heat/qingcloud_heat_plugin/client/private_key_pair
 
 
 resources:
   key:
     type: COM::TwoFellows::Key
     properties:
-      zone: { get_param: key_pair_zone }
+      zone: { get_param: zone }
       name: { get_param: key_pair_name }
+      private_key_file: { get_param: private_key_file }
 
 outputs:
-  pub_key:
-    description: public key
-    value: { get_attr: [ key, pub_key ] }
-  private_key:
-    description: private key
-    value: { get_attr: [ key, private_key ] }
+  key_pair_id:
+    description: ID of the SSH key pair
+    value: { get_attr: [ key, key_pair_id ] }

@@ -8,11 +8,11 @@ from heat.engine import constraints
 
 LOG = PluginLog().get_logger()
 
-
 class QingCloudKey(resource.Resource):
     _conn = None
     private_key = None
-    pub_key = None
+
+    _key_pair_id = None
 
     properties_schema = {
         'zone': properties.Schema(
@@ -28,29 +28,30 @@ class QingCloudKey(resource.Resource):
             _('the name of the key pair'),
             required=True,
         ),
+        'private_key_file': properties.Schema(
+            properties.Schema.STRING,
+            _('private key file of a key pair'),
+            required=True,
+        ),
     }
 
     update_allowed_keys = ('Properties',)
 
     attributes_schema = {
-        'name': _('the name of the SSH key pair'),
+        "key_pair_id": _('ID of the SSH key pair'),
     }
 
     def handle_create(self):
         LOG.info("----------------------Heat engine is starting to create a key pair------------------------------")
-        #import pdb
-        #pdb.set_trace()
         zone = self.properties['zone']
         name = self.properties['name']
-        a = self.properties['a']
-        LOG.debug("------------------------a: [%s]" % a)
-
+        private_key_file = self.properties['private_key_file']
 
         conn = API_Connection().get_connection(zone)
         self._conn = conn
 
         ret = conn.create_keypair(name)
-        LOG.debug("SSH--create_keypair():%s)" % ret)
+        LOG.debug("Key--create_keypair():%s)" % ret)
         '''
         {u'action': u'CreateKeyPairResponse',
         u'private_key': u'-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAuwKg9F+ms+7QzmKefCVTpgutkz/XUHWUpOqQyBXbN5KHsSbb\nHNTeOY7cowM7kzdbYh+ohcqry9uf7JFg8o7V+kIM9SswWJKTtaM+WPLv4RXoN49L\ner+0KqH2OgmYU4IpdBaaUeXspCU0l7Xy8XK84HbXsuoFB7AtxxlplbTDu64SvzkF\nQNi5MY/L+yCTSrnXVduYIQEMHaFPhMPwHivNWuNCod+cxlFdi584DBfJrduCmR/g\nbWX8abYVNby2wCle5NPiykwWm+nHXrd8Mf+NhA4X1UM+CWxO76FWri9SLr9d11LF\nmNNo4eIb99kUx1lDPtoRbkte8Ab/pQgF//aSGQIDAQABAoIBAB078vdgwImeSqwI\nxKe5mhL5/l9nenxMdTk2pf1xVTyhvm6WGWivajHrQFiHV9fSrolvU4Pew+5xXdW4\ngERKye5+RtJItx0RhN+/Li7vg0pXh16wGueMcli7yucVuudLELniEqu82rpqSodw\n3RKbkiUwztVcOf8SroVSVqwdfv+mmUD7cxyerxIFCQgR37lLzPejYKSywtSV8zue\nS7ErQZB3Vf0bD3AquGrTSLd+RlOqqXRmeOcmd5jfE6OiLrQSrdRULqWz16iMD81g\n5D+AVCRP2p1aY0cieTzpPQGiDMmjn1pPo3jFhH0hqYUoZl+j8PUfPdqSSGDFwkhp\n2C6HUYUCgYEA33gV+B4b0invL4x3rvmY6DpXP6gcG2qs/xKmmY8KhXCzilN8MN9c\ncDciPENyWK0z+9NI3N3gEUiXaLY9wyivHcCiNc4Ta2W5IIrjUjyU8W0BsJXo+5qd\n61kBk8znofcc+9P5u6vhTyuvtv929aSgiTBHlgaCgfC7CPNURuAfAFcCgYEA1jvZ\nj1IFGZZnsAUjfLaXS20rIdJwwjzxRS/iO/XhkZX0fMyZuzuWIj2U9VFHneHR2k4z\nPH4FvMS/ge0SZWedyh/SJeEMIatKNJjj4/umI7uX3K9ZC1i/iXXUA0baoY6oFI10\noXdg3WZhzhLMIa7x+9+KSWJvDvJMtj8OEAaKuw8CgYAa1BPvIc49QQOSNc74lsag\nusBWyBv3vqreRKLztJSSyKEFblhulaJHZpcZnQ9RThn7lbYdrhWEfa6Px7FKiMvd\nSo8u3nq+XgwHuCTqbpODGI8nYBgEfN+QrbLex67XZw93vE8zFMOL+bayxaDGhOkx\nDzbI8Cci6n/J50yq5aVTKQKBgQCrIHey0jOcstX0dsZYEopcB8ISbEUCAyg+ufcf\nKlOatYvsPIr4Uqqkg0h/hQOODBpTJXAr/AadORQ4tqShN9mE4VI+S7wjEO5fgVlY\nfWXC2VB/Sdn5BFVLekF2tJxjvM5qTGxDplZLxEKQF9fTeCl3pqKR5/0KlWXNliSn\njHI45QKBgQDPYxO/bn6+Mde52FTnVhRcFXRHSkQ64aBwcz6TUdbbeOnAuI/wMCOf\nvhz+SfCYjMjBClDcnhypWJt8qged1hXZmZrAMIM8Ix+X2qdtbrVmtj82yWLzdnL9\nUGc9MZYgqnDPsyQTdS/HLrhytDaiwGzorFY+8LnzLe8W2oHwz5laJA==\n-----END RSA PRIVATE KEY-----\n',
@@ -66,7 +67,13 @@ class QingCloudKey(resource.Resource):
             if 'private_key' in ret.keys():
                 global private_key
                 private_key = ret['private_key']
-            return ret['keypair_id']
+                key_file = open(private_key_file, 'w')
+                key_file.write(private_key)
+                key_file.close()
+
+            global _key_pair_id
+            _key_pair_id = ret['keypair_id']
+            return _key_pair_id
         else:
             if 'message' in ret.keys():
                 message = ret['message']
@@ -117,11 +124,6 @@ class QingCloudKey(resource.Resource):
             if key_pair_num == 1:
                 LOG.debug("key_pair_num: %s" % key_pair_num)
                 key_pair = resource_status_ret['keypair_set'][0]
-                LOG.debug("1")
-                global pub_key
-                LOG.debug("2")
-                pub_key = key_pair['pub_key']
-                LOG.debug("3")
                 return True
             elif key_pair_num == 0:
                 LOG.debug("key_pair_num: %s" % key_pair_num)
@@ -132,10 +134,8 @@ class QingCloudKey(resource.Resource):
 
     def _resolve_attribute(self, name):
         LOG.debug("Resolving attributes of the resource type")
-        if name == 'pub_key':
-            return pub_key
-        if name == 'private_key':
-            return private_key
+        if name == 'key_pair_id':
+            return _key_pair_id
 
 
 def resource_mapping():

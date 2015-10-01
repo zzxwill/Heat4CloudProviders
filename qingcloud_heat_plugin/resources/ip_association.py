@@ -8,7 +8,7 @@ from heat.engine import constraints
 
 LOG = PluginLog().get_logger()
 
-class QingCloudIP(resource.Resource):
+class QingCloudIPAssociation(resource.Resource):
     '''
     To associate an IP address to an instance
     zzxwill
@@ -17,10 +17,12 @@ class QingCloudIP(resource.Resource):
 
     _conn = None
 
+    _eip_id = None
+
     properties_schema = {
-        'eip': properties.Schema(
+        'eip_id': properties.Schema(
             properties.Schema.STRING,
-            _('The public IP address'),
+            _('The ID of the public IP address'),
             required=True,
             constraints=[
                 constraints.Length(1),
@@ -44,7 +46,7 @@ class QingCloudIP(resource.Resource):
     update_allowed_keys = ('Properties',)
 
     attributes_schema = {
-        'private_key': _('the private SSH key pair'),
+        'eip': _('The public IP address which is associated to an instance"'),
     }
 
     def handle_create(self):
@@ -55,13 +57,13 @@ class QingCloudIP(resource.Resource):
         #import pdb
         #pdb.set_trace()
 
-        eip = self.properties['eip']
+        eip_id = self.properties['eip_id']
         instance_id = self.properties['instance_id']
         zone = self.properties['zone']
         conn = API_Connection().get_connection(zone)
         self._conn = conn
 
-        ret = conn.associate_eip(eip = eip, instance=instance_id)
+        ret = conn.associate_eip(eip = eip_id, instance=instance_id)
 
         LOG.debug("KeyAttachment--return of associate_eip: %s)" % ret)
 
@@ -100,15 +102,10 @@ class QingCloudIP(resource.Resource):
         return token
 
 
-    def _resolve_attribute(self, name):
-        LOG.debug("Resolving attributes of the resource type")
-
-        return "aaa"
-
 
 def resource_mapping():
     return {
-        'COM::TwoFellows::IP': QingCloudIP,
+        'COM::TwoFellows::IPAssociation': QingCloudIPAssociation,
     }
 
 

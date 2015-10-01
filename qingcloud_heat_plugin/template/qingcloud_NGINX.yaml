@@ -1,0 +1,100 @@
+heat_template_version: 2015-04-30
+
+description: >
+  To create an instance, create a key pair and an IP address, associate the IP address and attach the key pair, then log on the VM and install a LAMP (currently only Nignx) in the VM of QingCloud
+
+parameters:
+  # server
+  server_image_id:
+    type: string
+    description: image id
+    default: trustysrvx64e
+  login_mode:
+      type: string
+      description: login mode. For Linux, there are keypair and passwd; for windows, there is only passwd
+      default: passwd
+  login_passwd:
+      type: string
+      description:
+      default: U8yx97xYw
+  zone:
+      type: string
+      description: data center
+      default: pek2
+
+  # key
+  key_pair_name:
+      type: string
+      description: the name of hte key pair
+      default: ''
+  private_key_file:
+      type: string
+      description: The file path of a private key
+      default: /usr/lib/heat/qingcloud_heat_plugin/client/private_key_pair
+
+  # key_attachment
+  key_pair_id:
+      type: string
+      description: The ID of a key pair. This could be a list, but currently, just keep it as one key pair
+      default: kp-obuizxb1
+
+  # ip_assocaition
+  ip_id:
+      type: string
+      description: The public IP address
+      default: eip-10t5adbh
+
+  # key_logon
+  instance_ip:
+      type: string
+      description: The public IP address of the instance
+      default: 119.254.100.229
+  ssh_user:
+      type: string
+      description: SSH user
+      default: root
+
+
+resources:
+  server:
+    type: COM::TwoFellows::Server
+    properties:
+      image_id: { get_param: server_image_id }
+      login_mode: { get_param: login_mode  }
+      login_passwd: { get_param: login_passwd }
+      zone: { get_param: zone }
+  key:
+    type: COM::TwoFellows::Key
+    properties:
+      zone: { get_param: zone }
+      name: { get_param: key_pair_name }
+      private_key_file: { get_param: private_key_file }
+  key_attachment:
+    type: COM::TwoFellows::KeyAttachment
+    depends_on: [server, key]
+    properties:
+      key_pair_id: { get_attr: [key, key_pair_id] }
+      instance_id: { get_attr: [server, instance_id] }
+      zone: { get_param: zone }
+  ip_association:
+    type: COM::TwoFellows::IPAssociation
+    depends_on: server
+    properties:
+      eip_id: { get_param: ip_id }
+      instance_id: { get_attr: [server, instance_id] }
+      zone: { get_param: zone }
+  key_logon:
+    type: COM::TwoFellows::KeyLogon
+    depends_on: [key_attachment, ip_association]
+    properties:
+      ip: { get_param: instance_ip }
+      private_key_file: { get_param: private_key_file }
+      user: { get_param: ssh_user }
+
+outputs:
+  instance_id:
+    description: ID of an instance
+    value: { get_attr: [ server, instance_id ] }
+  key_pair_id:
+    description: ID of the SSH key pair
+    value: { get_attr: [ key, key_pair_id ] }

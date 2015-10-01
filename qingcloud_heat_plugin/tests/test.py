@@ -12,6 +12,7 @@ import urllib
 from hashlib import sha256
 import time
 
+from heat.common import exception
 import qingcloud.iaas
 
 if __name__ == '__main__':
@@ -66,38 +67,32 @@ if __name__ == '__main__':
     #ssh.close()
 
     ssh = paramiko.SSHClient()
-    pkey_file = 'c:\zhouzhengxi\Programming\Python\Heat4CloudProviders\qingcloud_heat_plugin\client\private_key_pair'
+    #pkey_file = 'c:\zhouzhengxi\Programming\Python\Heat4CloudProviders\qingcloud_heat_plugin\client\private_key_pair'
+    pkey_file = '/usr/lib/heat/qingcloud_heat_plugin/client/private_key_pair'
     pkey_pass = '123321'
+    ip = '119.254.100.229'
     ssh_port = 22
     ssh_user = 'root'
-    key = paramiko.RSAKey.from_private_key_file(pkey_file)
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print 1
+    ssh_client = paramiko.SSHClient()
+    print 2
+    private_key = paramiko.RSAKey.from_private_key_file(pkey_file)
+    print 3
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print 4
     try:
-        ssh.connect("119.254.100.229", ssh_port, ssh_user, pkey=key)
-        cmd = "touch /root/a.txt"
-        stdin, stdout, stderr = ssh.exec_command(cmd)
-
-        print stdout.readlines()
-        print -1
-        print stderr.readlines()
+        ssh_client.connect(hostname=ip, username=ssh_user, password=None, pkey=private_key)
+        print 5
+        cmd = "touch /root/zhouzhengxi.txt"
+        stdin, stdout, stderr = ssh_client.exec_command(cmd)
 
         exit_status = stdout.channel.recv_exit_status()
-        print "exit_status", exit_status
+        ssh_client.close()
 
-        for line in stdout:
-            print '... ' + line.strip('\n')
-        print "1"
-        print stderr.read()
-        print "2"
-        print stdout
-        print "3"
-        print stderr
-        print "4"
-        ssh.close()
     except Exception as e:
-        print e
-        print "5"
-
+        print("Fail to log on the instance with reason: [%s]" % e)
+        exc = exception.Error(((e)))
+        raise exc
 
 
 

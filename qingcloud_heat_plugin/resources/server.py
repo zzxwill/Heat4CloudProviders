@@ -102,7 +102,7 @@ class QingCloudServer(resource.Resource):
                              image_id=qingcloud_image_id,        
                              cpu=1,        
                              memory=1024,        
-                             #vxnets=['vxnet-0'],        
+                             vxnets=['vxnet-0'],
                              login_mode= qingcloud_login_mode,        
                              login_passwd= qingcloud_login_passwd)
 
@@ -135,6 +135,10 @@ class QingCloudServer(resource.Resource):
 
         ret = self._return_instance_dict
         LOG.debug("instance information is [%s]" % ret)
+        '''
+        an example
+        {u'action': u'DescribeInstancesResponse', u'instance_set': [{u'vcpus_current': 1, u'status': u'running', u'vxnets': [], u'memory_current': 1024, u'cpu_topology': u'', u'tags': [], u'lastest_snapshot_time': u'', u'image': {u'ui_type': u'tui', u'processor_type': u'64bit', u'image_id': u'trustysrvx64e', u'provider': u'system', u'image_name': u'Ubuntu Server 14.04.2 LTS 64bit', u'platform': u'linux', u'os_family': u'ubuntu', u'image_size': 20}, u'transition_status': u'creating', u'instance_id': u'i-3ggt6s3h', u'instance_type': u'c1m1', u'instance_class': 0, u'dns_aliases': [], u'alarm_status': u'', u'create_time': u'2015-09-30T05:49:24Z', u'owner': u'usr-7r2bVOxj', u'status_time': u'2015-09-30T05:49:24Z', u'instance_name': u'', u'sub_code': 0, u'description': None}], u'ret_code': 0, u'total_count': 1}
+        '''
 
         if 'ret_code' in ret.keys():
             return_code = ret['ret_code']
@@ -192,17 +196,11 @@ class QingCloudServer(resource.Resource):
         return False
 
     def _resolve_attribute(self, name):
-        LOG.debug("-------------------------------_resolve_attribute----------------------------")
-        LOG.debug("-------------------------------------------------------------------------------name: %s" % name)
-
-        LOG.debug("-------------equal? %s" % name == 'instance_id')
-
         if name == 'instance_id':
-            return "id-et3x"
             LOG.debug("------------------------------------------------resolving attribute %s" % name)
-            LOG.debug("_return_instance_dict: %s" % self._return_instance_dict)
-            LOG.debug("_return_instance_dict['instances']: %s" % self._return_instance_dict['instances'])
-            return self._return_instance_dict['instances'][0]
+            LOG.debug("_return_instance_dict_test: %s" % _return_instance_dict_test)
+            LOG.debug("_return_instance_dict_test['instances']: %s" % _return_instance_dict_test['instances'])
+            return _return_instance_dict_test['instances'][0]
 
 
 def resource_mapping():
