@@ -45,8 +45,6 @@ class QingCloudKeyLogon(resource.Resource):
     }
 
     def handle_create(self):
-        import time
-        time.sleep(90)
         import logging
         r = logging.getLogger()
         r.debug("-----------------------------------------------")
@@ -70,7 +68,7 @@ class QingCloudKeyLogon(resource.Resource):
             r.debug("connect before")
             ssh_client.connect(hostname=ip, username=user, password=None, pkey=private_key)
             r.debug("connect after")
-            cmd = "touch /root/zhouzhengxi.txt"
+            cmd = "touch /root/zhouzhengxi.txt; yum -qy install nginx; service nginx start"
             stdin, stdout, stderr = ssh_client.exec_command(cmd)
 
             exit_status = stdout.channel.recv_exit_status()

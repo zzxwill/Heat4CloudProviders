@@ -85,8 +85,7 @@ class QingCloudKeyAttachment(resource.Resource):
             return False
 
     def check_create_complete(self, token):
-        import time
-        time.sleep(90)
+
         """
         Check the status of attaching a key pair to an instance
         @param token: The return of handle_create()
@@ -95,6 +94,20 @@ class QingCloudKeyAttachment(resource.Resource):
         """
         LOG.info("Heat engine is starting to check whether the attachment of SSH key pair to an instance completes")
         LOG.debug("Token return by create operation is [%s]" % token)
+        instance_id = self.properties['instance_id']
+        key_pair_id = self.properties['key_pair_id']
+
+        if token:
+            instance_status_ret = self._conn.describe_instances(instances=[instance_id], verbose=1)
+
+            LOG.debug("instance_status_ret: %s" % instance_status_ret)
+            keypair_ids = instance_status_ret['instance_set'][0]['keypair_ids']
+            LOG.debug("keypair_ids: %s" % keypair_ids)
+            if keypair_ids.__contains__(key_pair_id):
+                return True
+            else:
+                return False
+
         return token
 
 def resource_mapping():

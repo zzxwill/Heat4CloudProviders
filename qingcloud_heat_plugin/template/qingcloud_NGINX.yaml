@@ -8,7 +8,7 @@ parameters:
   server_image_id:
     type: string
     description: image id
-    default: trustysrvx64e
+    default: centos65x64d
   login_mode:
       type: string
       description: login mode. For Linux, there are keypair and passwd; for windows, there is only passwd

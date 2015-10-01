@@ -7,11 +7,11 @@ parameters:
   key_pair_id:
       type: string
       description: The ID of a key pair. This could be a list, but currently, just keep it as one key pair
-      default: kp-obuizxb1
+      default: kp-a56dds11
   instance_id:
       type: string
       description: The ID of an instance. This could be a list, but currently, just keep it as one key pair
-      default: i-ptbxlxb7
+      default: i-0xjmusae
   zone:
       type: string
       description: data center
