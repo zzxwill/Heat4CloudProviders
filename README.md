@@ -1,6 +1,6 @@
 # Heat4CloudProviders
 Heat4CloudProviders is an OpenStack Heat solution for Chinese IaaS Cloud Providers, like QingCloud and Meituan Cloud, to 
-make services deployment much more automatically and much simplily. 
+make services deployment much more automatically and much simply. 
 
 This includes
 * provision an instance
