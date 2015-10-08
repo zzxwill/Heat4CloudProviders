@@ -1,0 +1,4 @@
+/usr/lib/heat
+/usr/lib/heat/qingcloud_heat_plugin
+/usr/lib/heat/qingcloud_heat_plugin/client
+/usr/lib/heat/qingcloud_heat_plugin/log
