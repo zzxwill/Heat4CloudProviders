@@ -20,3 +20,8 @@ If you'd like to run from the master branch, you can clone the git repo:
 
 * Blog: http://www.zhouzhengxi.com/wordpress/tag/heat/
 * WeChat: Geek2014
+
+Acknowledgement
+---------------
+
+* [Meituan Cloud](https://mos.meituan.com/) provides two Cloud servers for me to deploy OpenStack Heat environment
