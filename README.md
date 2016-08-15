@@ -15,7 +15,7 @@ Getting Started
 
 If you'd like to run from the master branch, you can clone the git repo:
 
-    git clone git@github.com:zzxwill/Heat4CloudProviders.git
+    git clone https://github.com/zzxwill/Heat4CloudProviders.git
 
 
 * Blog: http://www.zhouzhengxi.com/wordpress/2015/10/10/heat4cloudproviders-get-started/
