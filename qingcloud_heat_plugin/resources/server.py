@@ -207,6 +207,3 @@ def resource_mapping():
     return {
         'COM::TwoFellows::Server': QingCloudServer,
     }
-
-if __name__ == '__main__':
-    pass
